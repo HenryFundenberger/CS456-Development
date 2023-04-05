@@ -118,7 +118,6 @@ function App() {
       JSON.stringify([...completedCards, newCard])
     );
     removeTodoCard(id);
-
     // play check sound
     const audio = new Audio(checkSound);
     audio.volume = 0.2;
@@ -164,6 +163,10 @@ function CardForm({ addCard }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     addCard(text);
+
+    // Clear the add to-do item input field
+    setText("");
+
   };
 
 
@@ -188,6 +191,9 @@ function CardForm({ addCard }) {
 
 
 function CardList({ cards, removeCard, completeCard }) {
+
+  const [removeMessage, setRemoveMessage] = useState("Remove");
+
   return (
     <div>
       <h2>To-Do Items</h2>
@@ -203,7 +209,7 @@ function CardList({ cards, removeCard, completeCard }) {
                   size="sm"
                   onClick={() => removeCard(card.id)}
                 >
-                  Remove
+                  {removeMessage}
                 </Button>{" "}
                 <Button
                   color="success"
