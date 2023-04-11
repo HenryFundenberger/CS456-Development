@@ -32,8 +32,15 @@ function App() {
   const [completedCards, setCompletedCards] = useState([]);
   const [noCardMessage, setNoCardMessage] = useState("No cards to display");
   const [noCompletedCardMessage, setNoCompletedCardMessage] = useState("No cards to display");
-  const [deleteButton, setDeleteButton] = useState(<FontAwesomeIcon icon="trash" />);
+  const [deleteButton, setDeleteButton] = useState( <FontAwesomeIcon icon="trash" />);
   const [checkButton, setCheckButton] = useState(<FontAwesomeIcon icon="check" />);
+  const [deleteButtonColor, setDeleteButtonColor] = useState("default");
+  const [deleteButtonBorderColor, setDeleteButtonBorderColor] = useState("default");
+  const [deleteButtonTextColor, setDeleteButtonTextColor] = useState("default");
+  const [checkButtonColor, setCheckButtonColor] = useState("default");
+  const [checkButtonBorderColor, setCheckButtonBorderColor] = useState("default");
+  const [checkButtonTextColor, setCheckButtonTextColor] = useState("default");
+
 
 
 
@@ -54,27 +61,7 @@ function App() {
 
 
     // edit all buttons inside todoButtons div to have pink background
-    const todoButtons = document.querySelectorAll(".todoButtons");
-    todoButtons.forEach((button) => {
-      button.style.backgroundColor = "#FFC0CB";
-      button.style.border = "#FFC0CB";
-      button.style.color = "black";
-
-      // When you hover over the button, it changes to a darker pink
-      button.addEventListener("mouseover", () => {
-        button.style.backgroundColor = "#FF69B4";
-        button.style.border = "#FF69B4";
-      }
-      );
-
-      // When you hover off the button, it changes back to the original pink
-      button.addEventListener("mouseout", () => {
-        button.style.backgroundColor = "#FFC0CB";
-        button.style.border = "#FFC0CB";
-      }
-      );
-    }
-    );
+    
 
     
     
@@ -178,24 +165,57 @@ function App() {
     };
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [colorDropdownOpen, setColorDropdownOpen] = useState(false);
 
     const toggle = () => setDropdownOpen((prevState) => !prevState);
+    const colorToggle = () => setColorDropdownOpen((prevState) => !prevState);
 
     // Function that updates the text of the dropdown button
     
-    const updateDropdownText = () => {
-      // First check if there are any todo cards
+    const setTextToText = () => {
       if (todoCards.length > 0) {
-        // If current deleteButton is the word "Delete", change it to the trash icon
-        if (deleteButton === "Delete") {
-          setDeleteButton(<FontAwesomeIcon icon="trash" />);
-        }
-        // If current deleteButton is the trash icon, change it to the word "Delete"
-        else {
-          setDeleteButton("Delete");
-        }
+        setDeleteButton("Delete");
+        setCheckButton("Complete");
       }
     };
+
+    const setTextSymbol = () => {
+      // First check if there are any todo cards
+      if (todoCards.length > 0) {
+        setDeleteButton(<FontAwesomeIcon icon="trash" />);
+        setCheckButton(<FontAwesomeIcon icon="check" />);
+      }
+    };
+
+    const blackAndWhite = () => {
+      setDeleteButtonColor("white");
+      setDeleteButtonBorderColor("black");
+      setDeleteButtonTextColor("black");
+      setCheckButtonColor("white");
+      setCheckButtonBorderColor("black");
+      setCheckButtonTextColor("black");
+    };
+
+    const defaultColors = () => {
+      setDeleteButtonColor("default");
+      setDeleteButtonBorderColor("default");
+      setDeleteButtonTextColor("default");
+      setCheckButtonColor("default");
+      setCheckButtonBorderColor("default");
+      setCheckButtonTextColor("default");
+    };
+
+    const deuteranomalyColors = () => {
+      setDeleteButtonColor("red");
+      setDeleteButtonBorderColor("red");
+      setDeleteButtonTextColor("white");
+      setCheckButtonColor("blue");
+      setCheckButtonBorderColor("blue");
+      setCheckButtonTextColor("white");
+    };
+
+
+
 
 
     return (
@@ -221,8 +241,18 @@ function App() {
         <Dropdown isOpen={dropdownOpen} toggle={toggle} direction="down">
           <DropdownToggle color="primary" caret>Text Option</DropdownToggle>
           <DropdownMenu>
-            <DropdownItem onClick={updateDropdownText}>Normal Text</DropdownItem>
-            <DropdownItem>Symbols</DropdownItem>
+            <DropdownItem onClick={setTextToText}>Normal Text</DropdownItem>
+            <DropdownItem onClick={setTextSymbol}>Symbols</DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </div>
+      <div className="">
+        <Dropdown isOpen={colorDropdownOpen} toggle={colorToggle} direction="down">
+          <DropdownToggle color="primary" caret>Color Options</DropdownToggle>
+          <DropdownMenu>
+            <DropdownItem onClick={defaultColors}>Default</DropdownItem>
+            <DropdownItem onClick={deuteranomalyColors}>Deuteranomaly</DropdownItem>
+            <DropdownItem onClick={blackAndWhite}>Black and White</DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </div>
@@ -244,11 +274,15 @@ function App() {
             <CardBody>
               <div className="d-flex justify-content-between">
                 <div className="todoLabel">{card.body}</div>
-                <div >
+                <div className="todoCardButtons" >
                   <Button
                     className="todoDeleteButton"
                     color="danger"
                     size="sm"
+
+                    // When you hover over the button, change the color to red
+                    style={{ backgroundColor: deleteButtonColor, borderColor: deleteButtonBorderColor, color: deleteButtonTextColor}}
+                    on
                     onClick={() => removeCard(card.id)}
                   >
                     {deleteButton}
@@ -256,6 +290,8 @@ function App() {
                   <Button
                     color="success"
                     size="sm"
+                    // update the style so the backgroundcolor of the button deleteButtonColor (which is a state)
+                    style={{ backgroundColor: checkButtonColor, borderColor: checkButtonBorderColor, color: checkButtonTextColor }}
                     onClick={() => completeCard(card.id, card.body)}
                   >
                     {checkButton}

@@ -33,3 +33,27 @@ code {
 .todoLabel{
   max-width: 60%;
 }
+
+
+
+/*make reactstrap dropdowns look like bootstrap dropdowns*/
+.dropdown-toggle::after {
+  display: none;
+}
+
+/*make reactstrap dropdowns have a little space between them*/
+.dropdown {
+  margin-right: 10px;
+}
+
+.red-delete-button {
+  background-color: red;
+}
+
+.red-delete-button:hover {
+  background-color: white;
+}
+
+.white-delete-button {
+  color: white;
+}
