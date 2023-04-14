@@ -5,6 +5,9 @@ import {
   Col,
   Card,
   CardBody,
+  CardTitle,
+  CardSubtitle,
+  CardText,
   Form,
   FormGroup,
   Input,
@@ -20,12 +23,14 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import trashSound from "./assets/trash.mp3";
 import checkSound from "./assets/check.mp3";
-
+// Get LogoName image from assets folder
+import LogoName from "./assets/LogoName2.png";
 // include font awsome checkmark and trash icons
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faCheck } from "@fortawesome/free-solid-svg-icons";
-library.add(faTrash, faCheck);
+import { faUndo } from "@fortawesome/free-solid-svg-icons";
+library.add(faTrash, faCheck, faUndo);
 
 function App() {
   const [todoCards, setTodoCards] = useState([]);
@@ -34,12 +39,15 @@ function App() {
   const [noCompletedCardMessage, setNoCompletedCardMessage] = useState("No cards to display");
   const [deleteButton, setDeleteButton] = useState( <FontAwesomeIcon icon="trash" />);
   const [checkButton, setCheckButton] = useState(<FontAwesomeIcon icon="check" />);
-  const [deleteButtonColor, setDeleteButtonColor] = useState("default");
-  const [deleteButtonBorderColor, setDeleteButtonBorderColor] = useState("default");
+  const [deleteButtonColor, setDeleteButtonColor] = useState("#DC3545");
+  const [deleteButtonBorderColor, setDeleteButtonBorderColor] = useState("#DC3545");
   const [deleteButtonTextColor, setDeleteButtonTextColor] = useState("default");
+  const [deleteButtonColorHover, setDeleteButtonColorHover] = useState("#b5333f");
   const [checkButtonColor, setCheckButtonColor] = useState("default");
   const [checkButtonBorderColor, setCheckButtonBorderColor] = useState("default");
   const [checkButtonTextColor, setCheckButtonTextColor] = useState("default");
+  const [checkButtonColorHover, setCheckButtonColorHover] = useState("default");
+  const [fontWeight, setFontWeight] = useState("500");
 
 
 
@@ -52,19 +60,13 @@ function App() {
       JSON.parse(localStorage.getItem("completedCards")) || [];
     setCompletedCards(storedCompletedCards);
 
-
+  
 
     // print DropdownToggle current value
     const dropdownToggle = document.querySelector(".dropdown-toggle");
     console.log(dropdownToggle.textContent);
 
 
-
-    // edit all buttons inside todoButtons div to have pink background
-    
-
-    
-    
 
   }, []);
 
@@ -79,14 +81,21 @@ function App() {
       localStorage.setItem("todoCards", JSON.stringify([...todoCards, newCard]));
     };
 
+
+    const removeCardSound = (id) => {
+      const audio = new Audio(trashSound);
+      audio.volume = 0.2;
+      audio.play();
+      removeTodoCard(id);
+    };
+
+
     const removeTodoCard = (id) => {
       const updatedTodoCards = todoCards.filter((card) => card.id !== id);
       setTodoCards(updatedTodoCards);
       localStorage.setItem("todoCards", JSON.stringify(updatedTodoCards));
 
-      // play trash sound
-      const audio = new Audio(trashSound);
-      audio.play();
+
 
     };
 
@@ -122,11 +131,15 @@ function App() {
     // Main Body Return of App
     return (
       <>
-      <Container>
+                      <br/>
+      <Container> 
+
         <Row>
           <Col className="mx-auto">
             <Card>
+              
               <CardBody>
+
                 <CardForm addCard={addCard} />
               </CardBody>
             </Card>
@@ -136,7 +149,7 @@ function App() {
           <Col >
             <CardList
               cards={todoCards}
-              removeCard={removeTodoCard}
+              removeCard={removeCardSound}
               completeCard={completeCard}
             />
           </Col>
@@ -187,31 +200,56 @@ function App() {
       }
     };
 
+    //setTextandSymbol
+    const setTextAndSymbol = () => {
+      if (todoCards.length > 0) {
+        setDeleteButton(
+          <>
+            <span>Delete </span>
+            <FontAwesomeIcon icon="trash" />
+          </>
+
+        );
+        setCheckButton(
+          <>
+            <span>Complete </span>
+            <FontAwesomeIcon icon="check" />
+          </>
+        )
+      }
+    };
+
     const blackAndWhite = () => {
       setDeleteButtonColor("white");
       setDeleteButtonBorderColor("black");
       setDeleteButtonTextColor("black");
+      setDeleteButtonColorHover("#c8ccc9");
       setCheckButtonColor("white");
       setCheckButtonBorderColor("black");
       setCheckButtonTextColor("black");
+      setCheckButtonColorHover("#c8ccc9");
     };
 
     const defaultColors = () => {
-      setDeleteButtonColor("default");
-      setDeleteButtonBorderColor("default");
-      setDeleteButtonTextColor("default");
-      setCheckButtonColor("default");
-      setCheckButtonBorderColor("default");
-      setCheckButtonTextColor("default");
+      setDeleteButtonColor("#DC3545");
+      setDeleteButtonBorderColor("#DC3545");
+      setDeleteButtonTextColor("white");
+      setDeleteButtonColorHover("#b5333f");
+      setCheckButtonColor("#198754");
+      setCheckButtonBorderColor("#198754");
+      setCheckButtonTextColor("white");
+      setCheckButtonColorHover("#13633e");
     };
 
     const deuteranomalyColors = () => {
-      setDeleteButtonColor("red");
-      setDeleteButtonBorderColor("red");
+      setDeleteButtonColor("#d8901f");
+      setDeleteButtonBorderColor("#d8901f");
       setDeleteButtonTextColor("white");
-      setCheckButtonColor("blue");
-      setCheckButtonBorderColor("blue");
+      setDeleteButtonColorHover("#bf7602");
+      setCheckButtonColor("#075bed");
+      setCheckButtonBorderColor("#075bed");
       setCheckButtonTextColor("white");
+      setCheckButtonColorHover("#184eab");
     };
 
 
@@ -220,13 +258,17 @@ function App() {
 
     return (
       <>
-      <Form onSubmit={handleSubmit} style={{ display: "flex", alignItems: "center" }}>
+
+      <Form onSubmit={handleSubmit} style={{ display: "flex", alignItems: "center",  }}>
+      <img style={{width:"100px"}} src={LogoName} alt="LogoName" /> 
         <InputGroup style={{ flex: 1 }}>
+          
           <Input
             type="text"
             placeholder="Add a to-do item"
             value={text}
             onChange={(e) => setText(e.target.value)}
+            style={{fontWeight:700, color:"black"}}
           />
 
             <Button color="primary" type="submit">
@@ -243,6 +285,8 @@ function App() {
           <DropdownMenu>
             <DropdownItem onClick={setTextToText}>Normal Text</DropdownItem>
             <DropdownItem onClick={setTextSymbol}>Symbols</DropdownItem>
+            <DropdownItem onClick={setTextAndSymbol}>Text + Symbols</DropdownItem>
+
           </DropdownMenu>
         </Dropdown>
       </div>
@@ -262,10 +306,30 @@ function App() {
   }
 
 
+
   function CardList({ cards, removeCard, completeCard }) {
 
     
+    const hoverOverDeleteButton = (id) => {
+      const deleteButton = document.getElementById(id);
+      deleteButton.style.backgroundColor = deleteButtonColorHover;
+    };
 
+    const leaveHoverOverDeleteButton = (id) => {
+      const deleteButton = document.getElementById(id);
+      deleteButton.style.backgroundColor = deleteButtonColor;
+    };
+
+    const hoverOverCheckButton = (id) => {
+      const checkButton = document.getElementById(id);
+      checkButton.style.backgroundColor = checkButtonColorHover;
+    };
+
+    const leaveHoverOverCheckButton = (id) => {
+      const checkButton = document.getElementById(id);
+      checkButton.style.backgroundColor = checkButtonColor;
+    };
+    
     return (
       <div>
         <h2>To-Do Items</h2>
@@ -273,16 +337,22 @@ function App() {
           <Card key={card.id} className="my-3">
             <CardBody>
               <div className="d-flex justify-content-between">
-                <div className="todoLabel">{card.body}</div>
+                <div
+                 className="todoLabel"
+                 style={{fontWeight:fontWeight}}>{card.body}</div>
                 <div className="todoCardButtons" >
                   <Button
                     className="todoDeleteButton"
                     color="danger"
                     size="sm"
+                    id = {card.id + "delete"} 
 
-                    // When you hover over the button, change the color to red
-                    style={{ backgroundColor: deleteButtonColor, borderColor: deleteButtonBorderColor, color: deleteButtonTextColor}}
-                    on
+                    // Onmouse over set the background color to green for this button (for this id only)
+                    onMouseOver={() => hoverOverDeleteButton(card.id + "delete")}
+                    onMouseLeave={() => leaveHoverOverDeleteButton(card.id + "delete")}
+              
+                    style={{ backgroundColor: deleteButtonColor, borderColor: deleteButtonBorderColor, color: deleteButtonTextColor, fontWeight: fontWeight}}
+                    
                     onClick={() => removeCard(card.id)}
                   >
                     {deleteButton}
@@ -290,8 +360,11 @@ function App() {
                   <Button
                     color="success"
                     size="sm"
+                    id = {card.id + "check"}
+                    onMouseOver={() => hoverOverCheckButton(card.id + "check")}
+                    onMouseLeave={() => leaveHoverOverCheckButton(card.id + "check")}
                     // update the style so the backgroundcolor of the button deleteButtonColor (which is a state)
-                    style={{ backgroundColor: checkButtonColor, borderColor: checkButtonBorderColor, color: checkButtonTextColor }}
+                    style={{ backgroundColor: checkButtonColor, borderColor: checkButtonBorderColor, color: checkButtonTextColor, fontWeight: fontWeight }}
                     onClick={() => completeCard(card.id, card.body)}
                   >
                     {checkButton}
@@ -309,27 +382,51 @@ function App() {
 
 
   function CompletedCardList({ cards, removeCard, noCardMessage }) {
-
+    const undoCard = (id) => {
+      const cardToUndo = completedCards.find((card) => card.id === id);
+      const updatedCompletedCards = completedCards.filter(
+        (card) => card.id !== id
+      );
+      setCompletedCards(updatedCompletedCards);
+      localStorage.setItem(
+        "completedCards",
+        JSON.stringify(updatedCompletedCards)
+      );
+      const updatedTodoCards = [...todoCards, cardToUndo];
+      setTodoCards(updatedTodoCards);
+      localStorage.setItem("todoCards", JSON.stringify(updatedTodoCards));
+    };
 
 
     return (
       <div>
-        <h2>Completed Items</h2>
-        {cards.map((card) => (
-          <Card key={card.id} className="my-3">
-            <CardBody>
-              <div className="d-flex justify-content-between">
-                <div>{card.body}</div>
-                <div>
-                  <h6>Completed</h6>
+        <h2>Completed</h2>
+        {cards.length > 0 ? (
+          cards.map((card) => (
+            <Card key={card.id} className="my-3">
+              <CardBody>
+                <div className="d-flex justify-content-between align-items-center">
+                  <div className="mr-3">{card.body}</div>
+                  <div className="todoCardButtons">
+                    <Button
+                      className="todoDeleteButton"
+                      color="warning"
+                      size="sm"
+                      onClick={() => undoCard(card.id)}
+                    >
+                      <FontAwesomeIcon icon={faUndo} />
+                    </Button>
+                  </div>
                 </div>
-              </div>
-              
-            </CardBody>
-          </Card>
-        ))}
+              </CardBody>
+            </Card>
+          ))
+        ) : (
+          <p>{noCompletedCardMessage}</p>
+        )}
       </div>
     );
+
   }
 }
 

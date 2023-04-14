@@ -50,10 +50,3 @@ code {
   background-color: red;
 }
 
-.red-delete-button:hover {
-  background-color: white;
-}
-
-.white-delete-button {
-  color: white;
-}
