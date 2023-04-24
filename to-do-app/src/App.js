@@ -47,6 +47,11 @@ function App() {
   const [checkButtonBorderColor, setCheckButtonBorderColor] = useState("default");
   const [checkButtonTextColor, setCheckButtonTextColor] = useState("default");
   const [checkButtonColorHover, setCheckButtonColorHover] = useState("default");
+  const [undoButton, setUndoButton] = useState(<FontAwesomeIcon icon="undo" />);
+  const [undoButtonColor, setUndoButtonColor] = useState("#FFC107");
+  const [undoButtonBorderColor, setUndoButtonBorderColor] = useState("#FFC107");
+  const [undoButtonTextColor, setUndoButtonTextColor] = useState("black");
+  const [undoButtonColorHover, setUndoButtonColorHover] = useState("#d9a302");
   const [fontWeight, setFontWeight] = useState("500");
 
 
@@ -61,10 +66,6 @@ function App() {
     setCompletedCards(storedCompletedCards);
 
   
-
-    // print DropdownToggle current value
-    const dropdownToggle = document.querySelector(".dropdown-toggle");
-    console.log(dropdownToggle.textContent);
 
 
 
@@ -170,6 +171,10 @@ function App() {
 
     const handleSubmit = (e) => {
       e.preventDefault();
+      // If text is empty or a bunch of spaces, don't add card
+      if (!text || /^\s*$/.test(text)) {
+        return;
+      }
       addCard(text);
 
       // Clear the add to-do item input field
@@ -179,9 +184,13 @@ function App() {
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [colorDropdownOpen, setColorDropdownOpen] = useState(false);
+    // Toggler for font weight drop down
+    const [weightDropDownOpen, setWeightDropDownOpen] = useState(false);
 
     const toggle = () => setDropdownOpen((prevState) => !prevState);
     const colorToggle = () => setColorDropdownOpen((prevState) => !prevState);
+    const weightToggle = () => setWeightDropDownOpen((prevState) => !prevState);
+
 
     // Function that updates the text of the dropdown button
     
@@ -189,6 +198,11 @@ function App() {
       if (todoCards.length > 0) {
         setDeleteButton("Delete");
         setCheckButton("Complete");
+        
+      }
+      // if completed cards is greater than 0
+      if (completedCards.length > 0) {
+        setUndoButton("Undo");
       }
     };
 
@@ -198,6 +212,11 @@ function App() {
         setDeleteButton(<FontAwesomeIcon icon="trash" />);
         setCheckButton(<FontAwesomeIcon icon="check" />);
       }
+      // if completed cards is greater than 0
+      if (completedCards.length > 0) {
+        setUndoButton(<FontAwesomeIcon icon="undo" />);
+      }
+
     };
 
     //setTextandSymbol
@@ -216,6 +235,16 @@ function App() {
             <FontAwesomeIcon icon="check" />
           </>
         )
+
+      }
+      // if completed cards is greater than 0
+      if (completedCards.length > 0) {
+        setUndoButton(
+          <>
+            <span>Undo </span>
+            <FontAwesomeIcon icon="undo" />
+          </>
+        );
       }
     };
 
@@ -228,6 +257,11 @@ function App() {
       setCheckButtonBorderColor("black");
       setCheckButtonTextColor("black");
       setCheckButtonColorHover("#c8ccc9");
+      setUndoButtonColor("white");
+      setUndoButtonBorderColor("black");
+      setUndoButtonTextColor("black");
+      setUndoButtonColorHover("#c8ccc9");
+
     };
 
     const defaultColors = () => {
@@ -239,6 +273,10 @@ function App() {
       setCheckButtonBorderColor("#198754");
       setCheckButtonTextColor("white");
       setCheckButtonColorHover("#13633e");
+      setUndoButtonColor("#FFC107");
+      setUndoButtonBorderColor("#FFC107");
+      setUndoButtonTextColor("black");
+      setUndoButtonColorHover("#d9a302");
     };
 
     const deuteranomalyColors = () => {
@@ -251,6 +289,44 @@ function App() {
       setCheckButtonTextColor("white");
       setCheckButtonColorHover("#184eab");
     };
+
+    const TritanomalyColors = () => {
+      // EE1646 Base Color
+      setDeleteButtonColor("#ee1646");
+      setDeleteButtonBorderColor("#ee1646");
+      setDeleteButtonTextColor("white");
+      setDeleteButtonColorHover("#bf153b");
+      //#3cb3c6
+      setCheckButtonColor("#3cb3c6");
+      setCheckButtonBorderColor("#3cb3c6");
+      setCheckButtonTextColor("white");
+      setCheckButtonColorHover("#238fa1");
+      //#ff7383
+      setUndoButtonColor("#ff7383");
+      setUndoButtonBorderColor("#ff7383");
+      setUndoButtonTextColor("white");
+      setUndoButtonColorHover("#c44d5a");
+
+    };
+
+
+    const setFontWeight100 = () => {
+      setFontWeight(100);
+    };
+
+    const setFontWeight400 = () => {
+      setFontWeight(400);
+    };
+
+    const setFontWeight500 = () => {
+      setFontWeight(500);
+    };
+
+    const setFontWeight700 = () => {
+      setFontWeight(700);
+    };
+
+
 
 
 
@@ -281,12 +357,22 @@ function App() {
       <Form style={{ display: "flex", justifyContent: "center", marginTop:"10px", }}>
       <div className="">
         <Dropdown isOpen={dropdownOpen} toggle={toggle} direction="down">
-          <DropdownToggle color="primary" caret>Text Option</DropdownToggle>
+          <DropdownToggle color="primary" caret>Button Text Options</DropdownToggle>
           <DropdownMenu>
             <DropdownItem onClick={setTextToText}>Normal Text</DropdownItem>
             <DropdownItem onClick={setTextSymbol}>Symbols</DropdownItem>
             <DropdownItem onClick={setTextAndSymbol}>Text + Symbols</DropdownItem>
-
+          </DropdownMenu>
+        </Dropdown>
+      </div>
+      <div className="">
+        <Dropdown isOpen={weightDropDownOpen} toggle={weightToggle} direction="down">
+          <DropdownToggle color="primary" caret>Font Options</DropdownToggle>
+          <DropdownMenu>
+            <DropdownItem onClick={setFontWeight100}>Small Font Weight</DropdownItem>
+            <DropdownItem onClick={setFontWeight400}>Normal Font Weight</DropdownItem>
+            <DropdownItem onClick={setFontWeight500}>Medium Font Weight</DropdownItem>
+            <DropdownItem onClick={setFontWeight700}>High Font Weight</DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </div>
@@ -295,7 +381,8 @@ function App() {
           <DropdownToggle color="primary" caret>Color Options</DropdownToggle>
           <DropdownMenu>
             <DropdownItem onClick={defaultColors}>Default</DropdownItem>
-            <DropdownItem onClick={deuteranomalyColors}>Deuteranomaly</DropdownItem>
+            <DropdownItem onClick={deuteranomalyColors}>Deuteranomaly / Protanomaly</DropdownItem>
+            <DropdownItem onClick={TritanomalyColors}>Tritanomaly</DropdownItem>
             <DropdownItem onClick={blackAndWhite}>Black and White</DropdownItem>
           </DropdownMenu>
         </Dropdown>
@@ -397,6 +484,16 @@ function App() {
       localStorage.setItem("todoCards", JSON.stringify(updatedTodoCards));
     };
 
+    const hoverOverUndoButton = (id) => {
+      const deleteButton = document.getElementById(id);
+      deleteButton.style.backgroundColor = undoButtonColorHover;
+    };
+
+    const leaveHoverOverUndoButton = (id) => {
+      const deleteButton = document.getElementById(id);
+      deleteButton.style.backgroundColor = undoButtonColor;
+    };
+
 
     return (
       <div>
@@ -413,8 +510,12 @@ function App() {
                       color="warning"
                       size="sm"
                       onClick={() => undoCard(card.id)}
+                      id = {card.id + "check"}
+                      onMouseOver={() => hoverOverUndoButton(card.id + "check")}
+                      onMouseLeave={() => leaveHoverOverUndoButton(card.id + "check")}
+                      style={{ backgroundColor: undoButtonColor, borderColor: undoButtonBorderColor, color: undoButtonTextColor, fontWeight: fontWeight }}
                     >
-                      <FontAwesomeIcon icon={faUndo} />
+                      {undoButton}
                     </Button>
                   </div>
                 </div>
